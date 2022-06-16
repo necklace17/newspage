@@ -9,7 +9,8 @@ data class News(
     val id: String? = null,
     val title: String,
     val publication: String,
-    val author: String
+    val author: String,
+    val content: String,
 ) {
 
 
