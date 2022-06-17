@@ -20,8 +20,15 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    runtimeOnly("org.springframework.boot:spring-boot-devtools")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.4.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testImplementation("io.mockk:mockk:1.12.4")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(module = "junit")
+        exclude(module = "junit-vintage-engine")
+        exclude(module = "mockito-core")
+    }
 }
 
 tasks.withType<KotlinCompile> {
