@@ -24,6 +24,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.4.2")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("io.mockk:mockk:1.12.4")
+    testImplementation("com.ninja-squad:springmockk:3.1.1")
+    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "junit")
         exclude(module = "junit-vintage-engine")
