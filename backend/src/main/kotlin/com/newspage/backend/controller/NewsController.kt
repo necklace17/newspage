@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController
 class NewsController(val newsService: NewsService) {
 
     @RequestMapping()
-    fun getNews(@RequestBody(required = false) retrieveRequestDto: RetrieveRequestDto): List<News> {
-        return newsService.getNews(retrieveRequestDto)
+    fun getNews(@RequestBody(required = false) retrieveRequestDto: RetrieveRequestDto?): List<News> {
+        return retrieveRequestDto?.let { newsService.getNews(it) } ?: newsService.getNews()
     }
 
     @RequestMapping("/search")
-    fun findNews(@RequestBody(required = false) searchRequestDto: SearchRequestDto): List<News> {
+    fun findNews(@RequestBody searchRequestDto: SearchRequestDto): List<News> {
         return newsService.findNews(searchRequestDto)
     }
 

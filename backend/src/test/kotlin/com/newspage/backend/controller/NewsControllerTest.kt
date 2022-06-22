@@ -33,9 +33,8 @@ internal class NewsControllerTest(@Autowired val mockMvc: MockMvc) {
         every { newsService.getNews() } returns listOf(news)
         mockMvc.perform(
             get(endpoint).contentType(MediaType.APPLICATION_JSON)
-        )
-            .andExpect(status().isOk)
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("\$.[0].id").value(newsId))
+        ).andExpect(status().isOk).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("\$.[0].id").value(newsId))
     }
 
     @Test
@@ -46,22 +45,39 @@ internal class NewsControllerTest(@Autowired val mockMvc: MockMvc) {
             get(endpoint).content(
                 mapper.writeValueAsString(retrieveRequestDto)
             ).contentType(MediaType.APPLICATION_JSON)
-        )
-            .andExpect(status().isOk)
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("\$.[0].id").value(newsId))
+        ).andExpect(status().isOk).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("\$.[0].id").value(newsId))
+    }
+
+    @Test
+    fun findNewsWithoutRetrieveRequestDto() {
+        val searchRequestDto = SearchRequestDto("hi", "some content")
+        every { newsService.findNews(searchRequestDto) } returns listOf(news)
+        mockMvc.perform(
+            get("$endpoint/search").content(
+                mapper.writeValueAsString(searchRequestDto)
+            ).contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("\$.[0].id").value(newsId))
     }
 
 
     @Test
-    fun findNews() {
+    fun findNewsWithRetrieveRequestDto() {
         val searchRequestDto = SearchRequestDto("hi", "some content", RetrieveRequestDto(0, 1))
         every { newsService.findNews(searchRequestDto) } returns listOf(news)
         mockMvc.perform(
             get("$endpoint/search").content(
                 mapper.writeValueAsString(searchRequestDto)
             ).contentType(MediaType.APPLICATION_JSON)
-        )
-            .andExpect(status().isOk)
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("\$.[0].id").value(newsId))
+        ).andExpect(status().isOk).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("\$.[0].id").value(newsId))
+    }
+
+    @Test
+    fun findNewsWithoutSearchRequestDto() {
+        mockMvc.perform(
+            get("$endpoint/search")
+        ).andExpect(status().isBadRequest)
     }
 }
