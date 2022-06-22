@@ -9,29 +9,37 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 
-@AutoConfigureMockMvc
-@SpringBootTest
+@WebMvcTest
 internal class NewsControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @MockkBean
     lateinit var newsService: NewsService
-    val mapper = jacksonObjectMapper()
+    private val mapper = jacksonObjectMapper()
 
     private val endpoint = "/api/v1/news"
 
-    private final val newsId = "42"
+    private val newsId = "42"
     private val news = News(newsId, "Good News", "here", "John Doe", "Lorem Ipsum")
 
     @Test
-    fun getNews() {
+    fun getNewsWithoutRetrieveRequestDto() {
+        every { newsService.getNews() } returns listOf(news)
+        mockMvc.perform(
+            get(endpoint).contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("\$.[0].id").value(newsId))
+    }
+
+    @Test
+    fun getNewsWithRetrieveRequestDto() {
         val retrieveRequestDto = RetrieveRequestDto(0, 1)
         every { newsService.getNews(retrieveRequestDto) } returns listOf(news)
         mockMvc.perform(
