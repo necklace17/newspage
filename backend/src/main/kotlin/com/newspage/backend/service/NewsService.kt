@@ -11,20 +11,27 @@ import org.springframework.stereotype.Service
 @Service
 class NewsService(val newsRepository: NewsRepository) {
     companion object {
-        val PAGE_REQUEST = PageRequest.of(0, 4)
+        const val DEFAULT_PAGE = 0
+        const val DEFAULT_PAGE_SIZE = 4
     }
 
-    fun getNews(retrieveRequestDto: RetrieveRequestDto?): List<News> {
+    fun getNews(
+        retrieveRequestDto: RetrieveRequestDto = RetrieveRequestDto(
+            DEFAULT_PAGE,
+            DEFAULT_PAGE_SIZE
+        )
+    ): List<News> {
         val pageable =
-            retrieveRequestDto?.let { PageRequest.of(it.page, retrieveRequestDto.size) }
-                ?: PAGE_REQUEST
+            retrieveRequestDto.let { PageRequest.of(it.page, retrieveRequestDto.size) }
 
         return newsRepository.findAll(pageable).toList()
     }
 
     fun findNews(searchRequestDto: SearchRequestDto): List<News> {
 
-        val pageable = searchRequestDto.retrieve?.let { PageRequest.of(it.page, it.size) } ?: PAGE_REQUEST
+        val pageable = searchRequestDto.retrieve?.let { PageRequest.of(it.page, it.size) } ?: PageRequest.of(
+            DEFAULT_PAGE, DEFAULT_PAGE_SIZE
+        )
 
         return newsRepository.findByTitleOrContent(
             searchRequestDto.title,
