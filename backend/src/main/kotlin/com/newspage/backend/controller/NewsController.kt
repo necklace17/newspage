@@ -1,6 +1,7 @@
 package com.newspage.backend.controller
 
 import com.newspage.backend.model.News
+import com.newspage.backend.search.RetrieveRequestDto
 import com.newspage.backend.search.SearchRequestDto
 import com.newspage.backend.service.NewsService
 import org.springframework.web.bind.annotation.RequestBody
@@ -11,7 +12,12 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/news")
 class NewsController(val newsService: NewsService) {
 
-    @RequestMapping
+    @RequestMapping()
+    fun getNews(@RequestBody(required = false) retrieveRequestDto: RetrieveRequestDto?): List<News> {
+        return retrieveRequestDto?.let { newsService.getNews(it) } ?: newsService.getNews()
+    }
+
+    @RequestMapping("/search")
     fun findNews(@RequestBody searchRequestDto: SearchRequestDto): List<News> {
         return newsService.findNews(searchRequestDto)
     }
