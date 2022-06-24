@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 export default function NewsCard(props: News) {
   const { id, title, publication, author, content } = props;
   return (
-    <Card sx={{ minWidth: 275 }}>
+    <Card sx={{ minWidth: 275, m: 2 }}>
       <CardContent>
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           {author}
@@ -17,7 +17,7 @@ export default function NewsCard(props: News) {
           {title}
         </Typography>
         <Typography variant="body2" component="p">
-          {content.slice(0, 400)}...
+          {content.slice(0, 700)}...
         </Typography>
       </CardContent>
       <CardActions>

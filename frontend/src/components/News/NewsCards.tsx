@@ -1,6 +1,6 @@
 import { News } from "../../entities/News";
 import React from "react";
-import NewsCard from "../NewsCard/NewsCard";
+import NewsCard from "./NewsCard";
 
 type NewsCardProps = {
   news: News[];
