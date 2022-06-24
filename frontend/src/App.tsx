@@ -1,5 +1,4 @@
 import React from "react";
-import "./App.css";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { News } from "./entities/News";
 import NewsCards from "./components/NewsCards/NewsCards";
