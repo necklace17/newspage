@@ -1,28 +1,9 @@
 import React from "react";
 import "./App.css";
-import {QueryClient, QueryClientProvider, useQuery} from "react-query";
-import {News} from "./components/entities/News";
-import NewsCard from "./components/news/News";
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.tsx</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import { News } from "./entities/News";
+import NewsCards from "./components/NewsCards/NewsCards";
+
 const queryClient = new QueryClient();
 export default function App() {
   return (
@@ -39,16 +20,7 @@ function Example(): JSX.Element {
 
   if (isLoading) return <div>Loading ...</div>;
   if (error) {
-    // @ts-ignore
     return <div>'An error has occurred: ' + error.message</div>;
   }
-  return data ? (
-    <div>
-      {data.map((news) => (
-        <NewsCard {...news} />
-      ))}
-    </div>
-  ) : (
-    <div />
-  );
+  return data ? <NewsCards news={data} /> : <div />;
 }

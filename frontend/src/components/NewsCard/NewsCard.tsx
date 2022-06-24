@@ -1,4 +1,4 @@
-import { News } from "../entities/News";
+import { News } from "../../entities/News";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -17,7 +17,7 @@ export default function NewsCard(props: News) {
           {title}
         </Typography>
         <Typography variant="body2" component="p">
-          {content.slice(0, 30)}...
+          {content.slice(0, 400)}...
         </Typography>
       </CardContent>
       <CardActions>
