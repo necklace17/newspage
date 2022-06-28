@@ -30,7 +30,7 @@ internal class NewsControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @Test
     fun getNewsWithoutRetrieveRequestDto() {
-        every { newsService.getNews() } returns listOf(news)
+        every { newsService.allNews() } returns listOf(news)
         mockMvc.perform(
             get(endpoint).contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk).andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -40,7 +40,7 @@ internal class NewsControllerTest(@Autowired val mockMvc: MockMvc) {
     @Test
     fun getNewsWithRetrieveRequestDto() {
         val retrieveRequestDto = RetrieveRequestDto(0, 1)
-        every { newsService.getNews(retrieveRequestDto) } returns listOf(news)
+        every { newsService.allNews(retrieveRequestDto) } returns listOf(news)
         mockMvc.perform(
             get(endpoint).content(
                 mapper.writeValueAsString(retrieveRequestDto)
@@ -52,7 +52,7 @@ internal class NewsControllerTest(@Autowired val mockMvc: MockMvc) {
     @Test
     fun findNewsWithoutRetrieveRequestDto() {
         val searchRequestDto = SearchRequestDto("hi", "some content")
-        every { newsService.findNews(searchRequestDto) } returns listOf(news)
+        every { newsService.searchNews(searchRequestDto) } returns listOf(news)
         mockMvc.perform(
             get("$endpoint/search").content(
                 mapper.writeValueAsString(searchRequestDto)
@@ -65,7 +65,7 @@ internal class NewsControllerTest(@Autowired val mockMvc: MockMvc) {
     @Test
     fun findNewsWithRetrieveRequestDto() {
         val searchRequestDto = SearchRequestDto("hi", "some content", RetrieveRequestDto(0, 1))
-        every { newsService.findNews(searchRequestDto) } returns listOf(news)
+        every { newsService.searchNews(searchRequestDto) } returns listOf(news)
         mockMvc.perform(
             get("$endpoint/search").content(
                 mapper.writeValueAsString(searchRequestDto)

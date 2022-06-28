@@ -30,7 +30,7 @@ internal class NewsServiceTest {
         val retrieveRequestDto = RetrieveRequestDto(page, size)
         val pageable = PageRequest.of(page, size)
         every { newsRepository.findAll(pageable) } returns PageImpl(listOf(news))
-        val newsResult = newsService.getNews(retrieveRequestDto)
+        val newsResult = newsService.allNews(retrieveRequestDto)
         Assertions.assertEquals(newsResult[0], news)
     }
 
@@ -38,7 +38,7 @@ internal class NewsServiceTest {
     fun getNewsWithoutRequestDto() {
         val pageable = PageRequest.of(NewsService.DEFAULT_PAGE, NewsService.DEFAULT_PAGE_SIZE)
         every { newsRepository.findAll(pageable) } returns PageImpl(listOf(news))
-        newsService.getNews()
+        newsService.allNews()
     }
 
     @Test
@@ -58,7 +58,7 @@ internal class NewsServiceTest {
                 pageable
             )
         } returns listOf(news)
-        val newsResult = newsService.findNews(searchRequestDto)
+        val newsResult = newsService.searchNews(searchRequestDto)
         Assertions.assertEquals(newsResult[0], news)
     }
 
@@ -73,7 +73,7 @@ internal class NewsServiceTest {
                 pageable
             )
         } returns listOf(news)
-        val newsResult = newsService.findNews(searchRequestDto)
+        val newsResult = newsService.searchNews(searchRequestDto)
         Assertions.assertEquals(newsResult[0], news)
     }
 }

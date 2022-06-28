@@ -21,7 +21,9 @@ export default function NewsCard(props: News) {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">Read</Button>
+        <Button href={"news/" + id} size="small">
+          Read
+        </Button>
       </CardActions>
     </Card>
   );
