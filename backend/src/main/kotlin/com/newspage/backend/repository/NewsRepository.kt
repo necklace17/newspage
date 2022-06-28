@@ -10,7 +10,12 @@ interface NewsRepository : ElasticsearchRepository<News, String> {
 
     override fun findAll(pageable: Pageable): Page<News>
 
-    fun findByTitleOrContent(title: String, content: String, pageable: Pageable): List<News>
+    fun searchNewsByTitleOrContentOrAuthor(
+        title: String,
+        content: String,
+        author: String,
+        pageable: Pageable
+    ): Page<News>
 
     fun findById(id: Int): Optional<News>
 
