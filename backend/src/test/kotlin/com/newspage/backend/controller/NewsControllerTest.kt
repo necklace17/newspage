@@ -7,11 +7,13 @@ import io.mockk.every
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.web.server.ResponseStatusException
 
 @WebMvcTest
 internal class NewsControllerTest(@Autowired val mockMvc: MockMvc) {
@@ -103,4 +105,21 @@ internal class NewsControllerTest(@Autowired val mockMvc: MockMvc) {
         every { newsService.getNews(newsId) } returns news
         assertProperSingleNewsResponse(mockMvc.perform(get("$endpoint/$newsId")))
     }
+
+    @Test
+    fun getTestThatDoesNotExist() {
+        val notExistingNewsId = newsId + 1
+        val errorMessage = "News with id $notExistingNewsId not found"
+        every { newsService.getNews(notExistingNewsId) }.throws(
+            ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                errorMessage
+            )
+        )
+        mockMvc.perform(get("$endpoint/$notExistingNewsId"))
+            .andExpect(status().isNotFound)
+            .andExpect(status().reason(errorMessage))
+    }
+
+
 }
