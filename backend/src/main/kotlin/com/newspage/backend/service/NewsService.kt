@@ -15,9 +15,9 @@ class NewsService(val newsRepository: NewsRepository) {
         const val DEFAULT_PAGE_SIZE = 10
     }
 
-    fun createPageable(page: Int?, size: Int?): PageRequest {
-        return PageRequest.of(page ?: DEFAULT_PAGE, size ?: DEFAULT_PAGE_SIZE)
-    }
+    fun createPageable(page: Int?, size: Int?): PageRequest =
+        PageRequest.of(page ?: DEFAULT_PAGE, size ?: DEFAULT_PAGE_SIZE)
+
 
     fun latestNews(page: Int?, size: Int?): List<News> {
         val pageable = createPageable(page, size)
@@ -27,14 +27,13 @@ class NewsService(val newsRepository: NewsRepository) {
 
     fun searchNews(searchString: String, page: Int?, size: Int?): List<News> {
         val pageable = createPageable(page, size)
+        
         return newsRepository.searchNewsByTitleOrContentOrAuthor(searchString, searchString, searchString, pageable)
             .toList()
     }
 
-    fun getNews(id: Int): News {
-        return newsRepository.findById(id).orElseThrow {
-            ResponseStatusException(HttpStatus.NOT_FOUND, "News with id $id not found")
-        }
+    fun getNews(id: Int): News = newsRepository.findById(id).orElseThrow {
+        ResponseStatusException(HttpStatus.NOT_FOUND, "News with id $id not found")
     }
 
 }
