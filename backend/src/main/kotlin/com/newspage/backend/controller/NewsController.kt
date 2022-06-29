@@ -20,11 +20,15 @@ class NewsController(val newsService: NewsService) {
 
     @RequestMapping("/search")
     fun searchNews(
-        @RequestParam(required = false) searchString: String?,
+        @RequestParam(required = false) searchString: String? = "",
         @RequestParam(required = false) page: Int?,
         @RequestParam(required = false) size: Int?,
-    ): List<News> =
-        searchString?.let { newsService.searchNews(searchString, page, size) } ?: newsService.latestNews(page, size)
+    ): List<News> {
+        if (searchString.isNullOrEmpty()) {
+            return newsService.latestNews(page, size)
+        }
+        return newsService.searchNews(searchString, page, size)
+    }
 
     @RequestMapping("/{id}")
     fun getNews(@PathVariable id: Int): News = newsService.getNews(id)

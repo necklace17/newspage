@@ -9,7 +9,7 @@ import NewsDetails from "./components/News/NewsDetails";
 
 const queryClient = new QueryClient();
 export default function App() {
-  const [search, setSearch] = React.useState(new SearchDto("", ""));
+  const [search, setSearch] = React.useState(new SearchDto());
 
   const customTheme = createTheme({
     components: {
@@ -28,7 +28,7 @@ export default function App() {
   });
 
   const searchHandler = (content: string) => {
-    setSearch(new SearchDto("", content));
+    setSearch(new SearchDto(content));
   };
 
   return (
@@ -38,7 +38,7 @@ export default function App() {
         <QueryClientProvider client={queryClient}>
           <Router>
             <Routes>
-              <Route path="/" element={<Content search={search} />} />
+              <Route path="/" element={<Content searchString={search} />} />
               <Route path="/news/:id" element={<NewsDetails />} />
             </Routes>
           </Router>

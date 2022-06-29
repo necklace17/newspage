@@ -53,6 +53,13 @@ internal class NewsControllerTest(@Autowired val mockMvc: MockMvc) {
     }
 
     @Test
+    fun searchWithEmptySearchString() {
+        val emptySearchString = ""
+        every { newsService.latestNews(null, null) } returns listOf(news)
+        mockMvc.perform(get("$endpoint/search").queryParam("searchString", emptySearchString))
+    }
+
+    @Test
     fun searchNewsWithSearchString() {
         val searchString = "Lorem"
         every { newsService.searchNews(searchString, null, null) } returns listOf(news)

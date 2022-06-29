@@ -1,9 +1,7 @@
 export class SearchDto {
-  title: string = "";
-  content: string = "";
+  searchString?: string = "";
 
-  constructor(title: string = "", content: string = "") {
-    this.title = title;
-    this.content = content;
+  constructor(searchString: string = "") {
+    this.searchString = searchString;
   }
 }

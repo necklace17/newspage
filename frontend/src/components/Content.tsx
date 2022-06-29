@@ -5,24 +5,28 @@ import axios from "axios";
 import NewsCards from "./News/NewsCards";
 
 type ContentProps = {
-  search: SearchDto;
+  searchString: SearchDto;
 };
 
 export function Content(props: ContentProps): JSX.Element {
-  const { search } = props;
+  const { searchString } = props;
 
   const [dataState, setDateState] = React.useState();
 
-  const { isLoading, error, data } = useQuery(["news", search], async () => {
-    axios("http://localhost:3000/api/v1/news/search", { params: search }).then(
-      function (res) {
-        console.log(res);
-        console.log(res.data);
-        setDateState(res.data);
-        return res.data;
-      }
-    );
+  const { isLoading, error } = useQuery(["news", searchString], async () => {
+    axios("http://localhost:3000/api/v1/news/search", {
+      params: searchString,
+    }).then(function (res) {
+      console.log(res);
+      console.log(res.data);
+      setDateState(res.data);
+      return res.data;
+    });
   });
+
+  if (dataState === undefined) {
+    return <div>Could not load data</div>;
+  }
 
   if (isLoading) return <div>Loading ...</div>;
   if (error) {
