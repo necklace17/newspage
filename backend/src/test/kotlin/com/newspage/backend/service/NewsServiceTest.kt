@@ -2,8 +2,6 @@ package com.newspage.backend.service
 
 import com.newspage.backend.model.News
 import com.newspage.backend.repository.NewsRepository
-import com.newspage.backend.search.RetrieveRequestDto
-import com.newspage.backend.search.SearchRequestDto
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions
@@ -11,69 +9,115 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import org.springframework.http.HttpStatus
+import org.springframework.web.server.ResponseStatusException
+import java.util.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class NewsServiceTest {
 
     private val newsRepository = mockk<NewsRepository>()
     private val newsService = NewsService(newsRepository)
-    private val newsId = "42"
+
+    private val newsId = 42
     private val news = News(newsId, "Good News", "here", "John Doe", "Lorem Ipsum")
+    val notExistingNewsId = newsId + 1
 
+    private val notDefaultPage = NewsService.DEFAULT_PAGE + 1
+    private val notDefaultPageSize = NewsService.DEFAULT_PAGE_SIZE + 1
+
+    val searchString = "Lorem"
 
     @Test
-    fun getNewsWithRequestDto() {
-        val page = 1
-        val size = 4
-        Assertions.assertNotEquals(setOf(page, size), setOf(NewsService.DEFAULT_PAGE, NewsService.DEFAULT_PAGE_SIZE))
-
-        val retrieveRequestDto = RetrieveRequestDto(page, size)
-        val pageable = PageRequest.of(page, size)
-        every { newsRepository.findAll(pageable) } returns PageImpl(listOf(news))
-        val newsResult = newsService.allNews(retrieveRequestDto)
-        Assertions.assertEquals(newsResult[0], news)
+    fun createPageableWithoutInputValues() {
+        val pageable = newsService.createPageable(null, null)
+        Assertions.assertEquals(PageRequest.of(NewsService.DEFAULT_PAGE, NewsService.DEFAULT_PAGE_SIZE), pageable)
     }
 
     @Test
-    fun getNewsWithoutRequestDto() {
-        val pageable = PageRequest.of(NewsService.DEFAULT_PAGE, NewsService.DEFAULT_PAGE_SIZE)
-        every { newsRepository.findAll(pageable) } returns PageImpl(listOf(news))
-        newsService.allNews()
+    fun createPageableWithInputValues() {
+        val pageable = newsService.createPageable(notDefaultPage, notDefaultPageSize)
+        Assertions.assertNotEquals(PageRequest.of(NewsService.DEFAULT_PAGE, NewsService.DEFAULT_PAGE_SIZE), pageable)
     }
 
     @Test
-    fun findNewsWithRetrieve() {
-        val page = 1
-        val size = 4
-        Assertions.assertNotEquals(setOf(page, size), setOf(NewsService.DEFAULT_PAGE, NewsService.DEFAULT_PAGE_SIZE))
-        val pageable = PageRequest.of(page, size)
-
-        val retrieveRequestDto = RetrieveRequestDto(page, size)
-        val searchRequestDto = SearchRequestDto("hi", "some Content", retrieveRequestDto)
-
+    fun latestNewsWithoutPageable() {
         every {
-            newsRepository.findByTitleOrContent(
-                searchRequestDto.title,
-                searchRequestDto.content,
-                pageable
+            newsRepository.findAll(
+                PageRequest.of(
+                    NewsService.DEFAULT_PAGE,
+                    NewsService.DEFAULT_PAGE_SIZE
+                )
             )
-        } returns listOf(news)
-        val newsResult = newsService.searchNews(searchRequestDto)
-        Assertions.assertEquals(newsResult[0], news)
+        } returns PageImpl(listOf(news))
+
+        val newsResponse = newsService.latestNews(null, null)
+        Assertions.assertEquals(news, newsResponse[0])
     }
 
     @Test
-    fun findNewsWithoutRetrieve() {
-        val searchRequestDto = SearchRequestDto("hi", "some Content")
-        val pageable = PageRequest.of(NewsService.DEFAULT_PAGE, NewsService.DEFAULT_PAGE_SIZE)
+    fun latestNewsWithPageable() {
         every {
-            newsRepository.findByTitleOrContent(
-                searchRequestDto.title,
-                searchRequestDto.content,
-                pageable
+            newsRepository.findAll(
+                PageRequest.of(
+                    notDefaultPage,
+                    notDefaultPageSize
+                )
             )
-        } returns listOf(news)
-        val newsResult = newsService.searchNews(searchRequestDto)
-        Assertions.assertEquals(newsResult[0], news)
+        } returns PageImpl(listOf(news))
+
+        val newsResponse = newsService.latestNews(notDefaultPage, notDefaultPageSize)
+        Assertions.assertEquals(news, newsResponse[0])
+    }
+
+    @Test
+    fun searchNewsWithoutPageable() {
+        every {
+            newsRepository.searchNewsByTitleOrContentOrAuthor(
+                searchString, searchString, searchString, PageRequest.of(
+                    NewsService.DEFAULT_PAGE,
+                    NewsService.DEFAULT_PAGE_SIZE
+                )
+            )
+        } returns PageImpl(listOf(news))
+        val newsResponse = newsService.searchNews(searchString, null, null)
+        Assertions.assertEquals(news, newsResponse[0])
+    }
+
+    @Test
+    fun searchNewsWithPageable() {
+        every {
+            newsRepository.searchNewsByTitleOrContentOrAuthor(
+                searchString, searchString, searchString, PageRequest.of(
+                    notDefaultPage,
+                    notDefaultPageSize
+                )
+            )
+        } returns PageImpl(listOf(news))
+        val newsResponse = newsService.searchNews(searchString, notDefaultPage, notDefaultPageSize)
+        Assertions.assertEquals(news, newsResponse[0])
+    }
+
+    @Test
+    fun getNews() {
+        every {
+            newsRepository.findById(newsId)
+        } returns Optional.of(news)
+        val newsResponse = newsService.getNews(newsId)
+        Assertions.assertEquals(news, newsResponse)
+    }
+
+    @Test
+    fun getNewsThatDoesNotExist() {
+        val expectedErrorMessage = "News with id $notExistingNewsId not found"
+        every {
+            newsRepository.findById(notExistingNewsId)
+        } returns Optional.empty()
+
+        val exception = Assertions.assertThrows(ResponseStatusException::class.java) {
+            newsService.getNews(notExistingNewsId)
+        }
+        Assertions.assertTrue(exception.message.contains(expectedErrorMessage))
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, exception.status)
     }
 }
