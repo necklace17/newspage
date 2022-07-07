@@ -1,28 +1,39 @@
-import { SearchDto } from "../entities/SearchDto";
+import { SearchParams } from "../entities/SearchParams";
 import React from "react";
 import { useQuery } from "react-query";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 import NewsCards from "./News/NewsCards";
 
 type ContentProps = {
-  searchString: SearchDto;
+  searchString: string;
 };
 
+function useQueryParams() {
+  const { search } = useLocation();
+  return React.useMemo(() => new URLSearchParams(search), [search]);
+}
+
 export function Content(props: ContentProps): JSX.Element {
-  const { searchString } = props;
+  let query = useQueryParams();
+
+  let searchParams = new SearchParams(
+    props.searchString,
+    parseInt(query.get("searchString") || "1")
+  );
 
   const [dataState, setDateState] = React.useState();
 
-  const { isLoading, error } = useQuery(["news", searchString], async () => {
-    axios("http://localhost:3000/api/v1/news/search", {
-      params: searchString,
-    }).then(function (res) {
-      console.log(res);
-      console.log(res.data);
-      setDateState(res.data);
-      return res.data;
-    });
-  });
+  const { isLoading, error } = useQuery(
+    ["news", searchParams.searchString],
+    async () => {
+      axios("http://localhost:3000/api/v1/news/search", {
+        params: searchParams,
+      }).then(function (res) {
+        setDateState(res.data);
+      });
+    }
+  );
 
   if (dataState === undefined) {
     return <div>Could not load data</div>;
