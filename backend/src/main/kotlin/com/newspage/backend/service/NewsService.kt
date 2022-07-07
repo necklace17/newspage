@@ -27,8 +27,13 @@ class NewsService(val newsRepository: NewsRepository) {
 
     fun searchNews(searchString: String, page: Int?, size: Int?): List<News> {
         val pageable = createPageable(page, size)
-        
-        return newsRepository.searchNewsByTitleOrContentOrAuthor(searchString, searchString, searchString, pageable)
+
+        return newsRepository.searchNewsByTitleContainingOrContentContainingOrAuthorContaining(
+            searchString,
+            searchString,
+            searchString,
+            pageable
+        )
             .toList()
     }
 
