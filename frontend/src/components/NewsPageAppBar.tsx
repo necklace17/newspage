@@ -6,10 +6,11 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import InputBase from "@mui/material/InputBase";
-import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { Stack } from "@mui/material";
+import Link from "@mui/material/Link";
+import NewspaperIcon from "@mui/icons-material/Newspaper";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -70,25 +71,27 @@ export default function NewsPageAppBar(props: NewsPageAppBarProps) {
             justifyContent: "space-between",
           }}
         >
-          <Stack direction="row" alignItems="center">
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              sx={{ mr: 2 }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
-            >
-              NewsPage
-            </Typography>
-          </Stack>
+          <Link href="/" color="inherit" underline="none">
+            <Stack direction="row" alignItems="center">
+              <IconButton
+                size="large"
+                edge="start"
+                color="inherit"
+                aria-label="open drawer"
+                sx={{ mr: 2 }}
+              >
+                <NewspaperIcon />
+              </IconButton>
+              <Typography
+                variant="h6"
+                noWrap
+                component="div"
+                sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+              >
+                NewsPage
+              </Typography>
+            </Stack>
+          </Link>
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
