@@ -21,12 +21,12 @@ internal class NewsServiceTest {
 
     private val newsId = 42
     private val news = News(newsId, "Good News", "here", "John Doe", "Lorem Ipsum")
-    val notExistingNewsId = newsId + 1
+    private val notExistingNewsId = newsId + 1
 
     private val notDefaultPage = NewsService.DEFAULT_PAGE + 1
     private val notDefaultPageSize = NewsService.DEFAULT_PAGE_SIZE + 1
 
-    val searchString = "Lorem"
+    private val searchString = "Lorem"
 
     @Test
     fun createPageableWithoutInputValues() {
@@ -73,7 +73,7 @@ internal class NewsServiceTest {
     @Test
     fun searchNewsWithoutPageable() {
         every {
-            newsRepository.searchNewsByTitleOrContentOrAuthor(
+            newsRepository.searchNewsByTitleContainingOrContentContainingOrAuthorContaining(
                 searchString, searchString, searchString, PageRequest.of(
                     NewsService.DEFAULT_PAGE,
                     NewsService.DEFAULT_PAGE_SIZE
@@ -87,7 +87,7 @@ internal class NewsServiceTest {
     @Test
     fun searchNewsWithPageable() {
         every {
-            newsRepository.searchNewsByTitleOrContentOrAuthor(
+            newsRepository.searchNewsByTitleContainingOrContentContainingOrAuthorContaining(
                 searchString, searchString, searchString, PageRequest.of(
                     notDefaultPage,
                     notDefaultPageSize
